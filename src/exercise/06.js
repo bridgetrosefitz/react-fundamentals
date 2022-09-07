@@ -4,33 +4,50 @@
 import * as React from 'react'
 
 function UsernameForm({onSubmitUsername}) {
-  // 🐨 add a submit event handler here (`handleSubmit`).
-  // 💰 Make sure to accept the `event` as an argument and call
-  // `event.preventDefault()` to prevent the default behavior of form submit
-  // events (which refreshes the page).
-  // 📜 https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
-  //
-  // 🐨 get the value from the username input (using whichever method
-  // you prefer from the options mentioned in the instructions)
-  // 💰 For example: event.target.elements[0].value
-  // 🐨 Call `onSubmitUsername` with the value of the input
 
-  // 🐨 add the onSubmit handler to the <form> below
+  const [error, setError] = React.useState('')
+  const [inputValue, setInputValue] = React.useState('')
 
-  // 🐨 make sure to associate the label to the input.
-  // to do so, set the value of 'htmlFor' prop of the label to the id of input
+  const handleChange = event => {
+    const incomingValue = event.target.value
+    // Set the value of the input to whatever the user types, even if there's a capital letter
+    setInputValue(incomingValue)
+
+    // Check if the input is valid
+    const isValid = incomingValue === incomingValue.toLowerCase()
+
+    // If the input is not valid
+    if(!isValid) {
+      // Update the error message
+      setError('Houston, we have an error - please use lower case only')
+    } else {
+    // As soon as the inputValue is valid, clear error
+      setError('')
+    }
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    onSubmitUsername(inputValue)
+    setInputValue('')
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div>
-        <label>Username:</label>
-        <input type="text" />
+        <label >Username:</label>
+        <input value={inputValue} onChange={handleChange}/>
       </div>
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={error.length > 0}>Submit</button>
+      <div style={{color: 'red'}} role='alert'>{error}</div>
     </form>
   )
 }
 
+////////////////////////////
+
 function App() {
+
   const onSubmitUsername = username => alert(`You entered: ${username}`)
   return <UsernameForm onSubmitUsername={onSubmitUsername} />
 }
